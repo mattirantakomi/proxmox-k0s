@@ -1,7 +1,7 @@
 # Proxmox-k0s
 
 * Creates Proxmox VMs on Proxmox hosts listed in `inventory` with Ansible
-* Installs k0s on Proxmox VMs to be used as worker nodes
+* Installs k0s with Ansible on Proxmox VMs to be used as worker nodes
 * Creates Hetzner Cloud VM with Terraform and installs k0s master on it with Ansible
 * Installs ingress-nginx on master to be used as public endpoint for http(s) connections
 * Installs Calico and WireGuard to handle network traffic between master and worker nodes
