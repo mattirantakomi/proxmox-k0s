@@ -1,0 +1,37 @@
+#cloud-config
+# Set TimeZone
+timezone: Europe/Helsinki
+
+# Install packages
+packages:
+  - htop
+  - sudo
+  - iotop
+  - net-tools
+  - screen
+  - wget
+  - git
+  - qemu-guest-agent
+  - wireguard
+
+# Update/Upgrade & Reboot if necessary
+package_update: true
+package_upgrade: true
+package_reboot_if_required: false
+
+chpasswd:
+  - expire: False
+ssh_pwauth: True
+locale: en_US.UTF-8
+runcmd:
+- systemctl disable systemd-resolved
+- systemctl stop systemd-resolved
+- rm -rf /etc/resolv.conf
+- echo nameserver 1.1.1.1 > /etc/resolv.conf
+- echo nameserver 8.8.8.8 >> /etc/resolv.conf
+- sed -i -e 's/^#PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
+- sed -i -e 's/^#AuthorizedKeysFile.*/AuthorizedKeysFile .ssh\/authorized_keys/g' /etc/ssh/sshd_config
+- systemctl restart sshd
+- apt-get update
+- systemctl start qemu-guest-agent
+- touch /root/DONE

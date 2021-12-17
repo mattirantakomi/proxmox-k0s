@@ -1,0 +1,5 @@
+- name: Install k0s master
+  hosts: master
+  strategy: free
+  roles:
+    - kube-master

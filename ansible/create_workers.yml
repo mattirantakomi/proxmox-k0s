@@ -1,0 +1,7 @@
+- name: Create new k0s worker virtual machines
+  hosts: workers
+  vars:
+    workertoken: "{{ lookup('file', 'files/workertoken') }}"
+  strategy: free
+  roles:
+    - proxmox-kube-worker

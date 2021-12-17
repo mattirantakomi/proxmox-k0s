@@ -1,0 +1,9 @@
+- name: Download Ubuntu
+  hosts: all
+  strategy: free
+  tasks:
+    - name: Download Ubuntu cloud image
+      get_url:
+        url: "{{ vm_os_image_url }}"
+        dest: "{{ vm_os_image_path }}"
+        validate_certs: no

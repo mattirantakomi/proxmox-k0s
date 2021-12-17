@@ -1,0 +1,5 @@
+- name: Update hosts
+  hosts: all
+  strategy: free
+  roles:
+    - update

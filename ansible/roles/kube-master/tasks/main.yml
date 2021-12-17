@@ -1,0 +1,83 @@
+- name: Wait for DONE
+  wait_for:
+    path: /root/DONE
+    timeout: 600
+    
+- name: Install required packages
+  apt:
+    name:
+      - python3-pip
+      - cloud-image-utils
+    state: latest
+    update_cache: yes
+
+- name: Install required python packages
+  pip:
+    name:
+      - requests
+      - proxmoxer
+
+- name: check if k0s has already been installed
+  stat: 
+    path: /root/.k0s.installed
+  register: installed
+
+- name: Download k0s
+  get_url:
+    url: https://get.k0s.sh
+    dest: /root/k0s
+    mode: 0755
+  when: installed.stat.exists == False
+
+- name: Install k0s
+  shell: 
+    cmd: |
+      K0S_VERSION="{{ k0s_version }}" /root/k0s
+      mkdir -p /etc/k0s
+      k0s default-config > /etc/k0s/k0s.yaml
+      sed -i -e 's/provider: kuberouter/provider: calico/g' /etc/k0s/k0s.yaml 
+      sed -i -e 's/calico: null/calico: \n      mode: vxlan\n      overlay: CrossSubnet\n      wireguard: true/g' /etc/k0s/k0s.yaml 
+      k0s install controller -c /etc/k0s/k0s.yaml --enable-worker
+  when: installed.stat.exists == False
+
+- name: Reboot
+  reboot:
+    reboot_timeout: 600
+  when: installed.stat.exists == False
+
+- name: Save kubeconfig to variable
+  shell: 
+    cmd: |
+      while true; do k0s kubeconfig admin && break; sleep 5; done
+      k0s kubeconfig admin
+  register: kubeconfig
+  ignore_errors: True
+  when: installed.stat.exists == False
+
+- name: Copy Kubeconfig to localhost
+  copy:
+    content: "{{ kubeconfig.stdout }}"
+    dest: files/kubeconfig
+  delegate_to: localhost
+  when: installed.stat.exists == False
+
+- name: Save worker token to variable
+  shell: 
+    cmd: |
+      k0s token create --role=worker --wait
+  register: workertoken
+  ignore_errors: True
+  when: installed.stat.exists == False
+
+- name: Copy worker token to localhost
+  copy:
+    content: "{{ workertoken.stdout }}"
+    dest: files/workertoken
+  delegate_to: localhost
+  when: installed.stat.exists == False
+
+- name: Create installed state file
+  shell: 
+    cmd: |
+      true
+    creates: "/root/.k0s.installed"

@@ -1,0 +1,34 @@
+- name: Delete virtual machines
+  hosts: workers
+  strategy: free
+  tasks:
+    - name: Delete VM from command line
+      shell: 
+        cmd: |
+          # echo "{{ ansible_hostname}} {{ ansible_host }}"
+          # date
+          PID=$(ps axuww |grep "kvm -id {{ vm_id }}" |grep -v "grep"|awk '{ print $2 }')
+          echo "Killing VM {{ vm_id }} with PID $PID"
+          kill -9 $PID 2>/dev/null || true
+        removes: "/etc/pve/qemu-server/{{ vm_id }}.conf"
+
+    - name: Delete VM using Ansible module to ensure that VM is deleted
+      community.general.proxmox_kvm:
+        api_user: "{{ api_user }}"
+        api_password: "{{ api_password }}"
+        api_host: "{{ api_host }}"
+        node: "{{ ansible_hostname }}"
+        vmid: "{{ vm_id }}"
+        state: absent
+        force: yes
+        timeout: 300
+
+    - name: Delete VM cloudinit file from snippets directory
+      file:
+        path: /var/lib/vz/snippets/{{ vm_id }}_cloudinit
+        state: absent
+
+    - name: Delete VM disk state file
+      file:
+        state: absent
+        path: "/root/.vm{{ vm_id }}.disk"

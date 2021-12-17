@@ -1,0 +1,31 @@
+api_host: "{{ ansible_ssh_host }}"
+api_user: root@pam
+api_password: password
+vm_name: k0s-worker
+vm_id: 1337
+vm_node: "{{ ansible_hostname }}"
+vm_ostype: l26
+vm_agent: yes
+vm_autostart: yes
+vm_bios: seabios
+vm_cores: 4
+vm_memory: 4096
+vm_cpu: host
+vm_onboot: yes
+vm_hotplug: network, disk, cpu, memory, usb
+vm_storage: local-lvm
+vm_disk_size: 50
+vm_disk_format: raw
+vm_net_bridge: vmbr0
+vm_numa_enabled: yes
+vm_state: started
+
+vm_domain: domain.tld
+
+vm_os_image_url: http://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64.img
+vm_os_image_path: /var/lib/vz/template/qemu/ubuntu-20.04-server-cloudimg-amd64.img
+
+vm_user: root
+vm_password: # echo "password" | mkpasswd -s --method=SHA-512 --rounds=4096
+vm_public_key: ssh public key
+
