@@ -65,7 +65,7 @@ Create Proxmox worker node VMs and install k0s:
 
 `ansible-playbook create_workers.yml`
 
-Wait for few minutes and check every node is in `Ready` state:
+Wait for few minutes and check that every node is in `Ready` state:
 
 `kubectl get node -o wide`
 
