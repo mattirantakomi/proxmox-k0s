@@ -1,4 +1,10 @@
-# Install cluster
+# Proxmox-k0s
+
+* Creates Proxmox VMs on Proxmox hosts listed on `inventory` with Ansible
+* Installs k0s on Proxmox VMs to be used as worker nodes
+* Creates Hetzner Cloud VM with Terraform and installs k0s master on it with Ansible
+
+## Install cluster
 
 Install Terraform:
 ```
@@ -77,7 +83,7 @@ Install ingress-nginx:
 
 Check that Nginx responds on http://master.domain.tld/
 
-# Delete cluster
+## Delete cluster
 
 Delete Proxmox worker node VMs:
 ```
