@@ -41,21 +41,27 @@ kubectl get node -o wide
 ```
 
 Test connectivity to Proxmox hosts:
+
 `ansible-playbook ping.yml`
 
 Update Proxmox hosts:
+
 `ansible-playbook update.yml`
 
 Download Ubuntu 20.04 LTS cloudimg to Proxmox hosts:
+
 `ansible-playbook ubuntu.yml`
 
 Create Proxmox worker node VMs and install k0s:
+
 `ansible-playbook create_workers.yml`
 
 Wait for few minutes and check every node is in `Ready` state:
+
 `kubectl get node -o wide`
 
 Also check that Calico is running on every node:
+
 `kubectl get pod -n kube-system -o wide -l k8s-app=calico-node`
 
 Install wg-pinger to keep WireGuard tunnels up:
@@ -66,6 +72,7 @@ Workaround for https://github.com/k3s-io/k3s/issues/1166
 `kubectl apply -f https://raw.githubusercontent.com/mattirantakomi/wg-pinger/master/daemonset.yaml`
 
 Install ingress-nginx:
+
 `kubectl apply -f yaml/ingress-nginx.yaml`
 
 Check that Nginx responds on http://master.domain.tld/
